@@ -1,0 +1,29 @@
+﻿@page "/example1"
+@inject IUserService service
+
+<PageTitle>Example1</PageTitle>
+
+<h3>Example1</h3>
+
+<div class="row">
+	<label for="id">Id</label>
+	<input id="id" type="text" @bind-value="id" />
+	<label for="">Name</label>
+	<input id="name" type="text" @bind-value="name" />
+
+	<button type="button" @onclick="CreateUser">등록</button>
+</div>
+
+
+@code {
+	private int id;
+	private string? name;
+
+	private void CreateUser()
+	{
+		User user = new();
+		user.Id = id;
+		user.Name = name;
+		service.CreateUser(user);
+	}
+}
