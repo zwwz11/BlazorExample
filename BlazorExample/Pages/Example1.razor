@@ -1,6 +1,7 @@
 ﻿@page "/example1"
 @inject IUserService service
 @inject IJSRuntime jsRuntime
+@inject NavigationManager navigationManager
 
 <PageTitle>Example1</PageTitle>
 
@@ -38,6 +39,7 @@
 	}
 
 	<input class="btn btn-primary" type="submit" value="등록"/>
+	<input class="btn btn-success" type="button" value="목록" onclick="@(() => navigationManager.NavigateTo("/example2"))"/>
 
 </EditForm>
 
@@ -45,8 +47,18 @@
 @code {
 	private User user = new();
 
-	private void CreateUser()
+	private async void CreateUser()
 	{
-		service.CreateUser(user);
+		try
+		{
+			service.CreateUser(user);
+			user = new();
+			await jsRuntime.InvokeVoidAsync("alert", "Success!");
+		}
+		catch(Exception ex)
+		{
+
+			Console.WriteLine(ex.Message);
+		}
 	}
 }

@@ -1,0 +1,40 @@
+﻿@page "/example2"
+@inject IUserService service
+@inject IJSRuntime jsRuntime
+@inject NavigationManager navi
+
+<PageTitle>Example2</PageTitle>
+
+<h3>Example2</h3>
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>Id</th>
+			<th>Name</th>
+			<th>Sex</th>
+			<th>Active</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach(var item in users)
+		{
+			<tr>
+				<td>@item.Id</td>
+				<td>@item.Name</td>
+				<td>@item.UserSex</td>
+				<td><input type="checkbox" value="@item.IsActive" checked="@item.IsActive" onclick="return false;" /></td>
+			</tr>
+		}
+	</tbody>
+</table>
+<input class="btn btn-success" type="button" value="뒤로가기" onclick="@(() => navi.NavigateTo("/example1"))" />
+
+@code {
+	List<User> users = new();
+
+	protected override void OnInitialized()
+	{
+		users = service.GetAllUsers().ToList();
+	}
+}
