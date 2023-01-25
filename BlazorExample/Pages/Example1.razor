@@ -1,29 +1,52 @@
 ﻿@page "/example1"
 @inject IUserService service
+@inject IJSRuntime jsRuntime
 
 <PageTitle>Example1</PageTitle>
 
 <h3>Example1</h3>
 
-<div class="row">
-	<label for="id">Id</label>
-	<input id="id" type="text" @bind-value="id" />
-	<label for="">Name</label>
-	<input id="name" type="text" @bind-value="name" />
+<EditForm Model="@user" OnValidSubmit="@CreateUser">
+	<DataAnnotationsValidator/>
 
-	<button type="button" @onclick="CreateUser">등록</button>
-</div>
+	<div class="mb-2 col-lg-6 col-md-6 col-sm-12">
+		<label class="form-label" for="id">Id</label>
+		<InputNumber @bind-Value="user.Id" class="form-control" id="id" />
+		<ValidationMessage For="@(() => user.Id)"/>
+	</div>
+	<div class="mb-2 col-lg-6 col-md-6 col-sm-12">
+		<label class="form-label" for="name">Name</label>
+		<InputText @bind-Value="user.Name" class="form-control" id="name" />
+		<ValidationMessage For="@(() => user.Name)"/>
+	</div>
+	<div class="mb-3 form-check col-lg-6 col-md-6 col-sm-12">
+		<label class="form-check-label" for="isActive">목록 열기</label>
+		<InputCheckbox @bind-Value="user.IsActive" class="form-check-input" id="isActive" />
+	</div>
+
+	@if(user.IsActive)
+	{
+		<div class="mb-3 col-lg-6 col-md-6 col-sm-12">
+			<label for="userSex">UserSex</label>
+			<InputSelect @bind-Value="user.UserSex" class="form-select">
+				@foreach(var item in Enum.GetNames(typeof(UserSex.userSex)))
+				{
+					<option class=""clas>@item</option>
+				}
+			</InputSelect>
+		</div>
+	}
+
+	<input class="btn btn-primary" type="submit" value="등록"/>
+
+</EditForm>
 
 
 @code {
-	private int id;
-	private string? name;
+	private User user = new();
 
 	private void CreateUser()
 	{
-		User user = new();
-		user.Id = id;
-		user.Name = name;
 		service.CreateUser(user);
 	}
 }

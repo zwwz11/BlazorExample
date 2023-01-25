@@ -1,4 +1,5 @@
 ﻿using BlazorExample.Models;
+using Microsoft.JSInterop;
 
 namespace BlazorExample.Services
 {
@@ -17,6 +18,7 @@ namespace BlazorExample.Services
             User newUser = new User();
             newUser.Id = user.Id;
             newUser.Name = user.Name;
+            newUser.UserSex = user.UserSex;
             users.Add(newUser);
         }
 
