@@ -7,5 +7,6 @@ namespace BlazorExample.Services
         void CreateUser(User user);
         User UpdateUser(User user);
         IEnumerable<User> GetAllUsers();
+        IEnumerable<User> GetAllUsersPage(int curPage);
     }
 }
