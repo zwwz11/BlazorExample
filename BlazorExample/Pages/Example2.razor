@@ -15,6 +15,7 @@
 			<th>Name</th>
 			<th>Sex</th>
 			<th>Active</th>
+			<th>Action</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -25,6 +26,10 @@
 				<td>@item.Name</td>
 				<td>@item.UserSex</td>
 				<td><input type="checkbox" value="@item.IsActive" checked="@item.IsActive" onclick="return false;" /></td>
+				<td>
+					<input type="button" class="btn btn-primary" value="수정" onclick="@(() => navi.NavigateTo($"/example3/{item.Id}"))"/>
+					<input type="button" class="btn btn-warning" value="삭제" onclick="@(() => DeleteUser(item.Id))"/>
+				</td>
 			</tr>
 		}
 	</tbody>
@@ -84,5 +89,12 @@
 	{
 		curPage = i;
 		ShowPage();
+	}
+
+	private void DeleteUser(int? id)
+	{
+		service.DeleteUser(id.Value);
+		ShowPage(curPage);
+		navi.NavigateTo("/example2", forceLoad: true);
 	}
 }

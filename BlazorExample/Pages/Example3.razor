@@ -1,0 +1,60 @@
+﻿@page "/example3/{id:int}"
+
+@inject IUserService service
+@inject IJSRuntime jsRuntime
+@inject NavigationManager navi
+
+<h3>Example3</h3>
+
+<EditForm Model="@user" OnValidSubmit="@UpdateUser">
+	<DataAnnotationsValidator/>
+
+	<div class="mb-2 col-lg-6 col-md-6 col-sm-12">
+		<label class="form-label" for="id">Id</label>
+		<InputNumber @bind-Value="user.Id" class="form-control" id="id" readonly />
+		
+	</div>
+	<div class="mb-2 col-lg-6 col-md-6 col-sm-12">
+		<label class="form-label" for="name">Name</label>
+		<InputText @bind-Value="user.Name" class="form-control" id="name" />
+		<ValidationMessage For="@(() => user.Name)"/>
+	</div>
+	<div class="mb-3 form-check col-lg-6 col-md-6 col-sm-12">
+		<label class="form-check-label" for="isActive">목록 열기</label>
+		<InputCheckbox @bind-Value="user.IsActive" class="form-check-input" id="isActive" />
+	</div>
+
+	@if(user.IsActive)
+	{
+		<div class="mb-3 col-lg-6 col-md-6 col-sm-12">
+			<label for="userSex">UserSex</label>
+			<InputSelect @bind-Value="user.UserSex" class="form-select">
+				@foreach(var item in Enum.GetNames(typeof(UserSex.userSex)))
+				{
+					<option>@item</option>
+				}
+			</InputSelect>
+		</div>
+	}
+
+	<input class="btn btn-primary" type="submit" value="수정" onclick="@(() => navi.NavigateTo("/example2"))"/>
+
+</EditForm>
+
+@code {
+	[Parameter]
+	public int Id { get; set; }
+
+	User user = null;
+
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		user = service.FindUser(Id);
+	}
+
+	private void UpdateUser()
+	{
+		service.UpdateUser(Id, user);
+	}
+}
