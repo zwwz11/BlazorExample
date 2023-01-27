@@ -1,0 +1,19 @@
+﻿@page "/memo-list"
+
+@inject IUserService service
+
+<h3>ExampleMemoList</h3>
+
+@foreach(var memo in memos)
+{
+	<textarea class="form-control mb-3" style="border:solid; height:100px" readonly>@memo.Text</textarea>
+}
+
+@code {
+	List<Memo> memos = new();
+
+	protected override void OnInitialized()
+	{
+		memos = service.GetAllMemos().ToList();
+	}
+}

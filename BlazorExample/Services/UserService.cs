@@ -6,6 +6,7 @@ namespace BlazorExample.Services
     public class UserService : IUserService
     {
         const int PAGESIZE = 5;
+        List<Memo> memos = new();
         List<User> users = new()
         {
             new User() { Id = 1, Name = "User1", IsActive = true },
@@ -85,6 +86,16 @@ namespace BlazorExample.Services
             {
                 users.Remove(findUser);
             }
+        }
+
+        public void CreateMemo(Memo memo)
+        {
+            memos.Add(memo);
+        }
+
+        public IEnumerable<Memo> GetAllMemos()
+        {
+            return memos.ToList();
         }
     }
 }

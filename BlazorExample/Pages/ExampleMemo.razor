@@ -1,0 +1,21 @@
+﻿@page "/memo"
+
+@inject IUserService service
+
+<h3>ExampleMemo</h3>
+
+
+<EditForm Model="@memo" OnValidSubmit="@CreateMemo">
+	<label class="form-label mt-3">메모장</label>
+	<textarea class="form-control mb-3" style="height:100px" @bind="memo.Text" />
+	<input class="btn btn-primary col-1" type="submit" value="메모 등록"/>
+</EditForm>
+
+@code {
+	Memo memo = new();
+
+	private void CreateMemo()
+	{
+		service.CreateMemo(memo);
+	}
+}

@@ -1,4 +1,4 @@
-﻿@page "/example2"
+﻿@page "/example2/{Page:int}"
 
 @inject IUserService service
 @inject IJSRuntime jsRuntime
@@ -36,12 +36,12 @@
 </table>
 <div>
 	<input type="button" class="btn-lg btn" id="prev" value="Previous" @onclick="PrevPage" />
-	@for (int i = curPage - 2; i <= curPage + 2; i++)
+	@for (int i = Page - 2; i <= Page + 2; i++)
 	{
 		int j = i;
 		@if (i > 0)
 		{
-			if (i == curPage)
+			if (i == Page)
 			{
 				<span class="px-2" style="font-weight:bold; cursor:pointer" @onclick="(() => ShowPage(j))">@i</span>
 			}
@@ -57,44 +57,45 @@
 <input class="btn btn-success" type="button" value="뒤로가기" onclick="@(() => navi.NavigateTo("/example1"))" />
 
 @code {
+	[Parameter]
+	public int Page { get; set; }
+
 	List<User> users = new();
-	private int curPage = 1;
 
 	protected override void OnInitialized()
 	{
-		ShowPage();
+		users = service.GetAllUsersPage(Page)?.ToList() ?? new();
 	}
 
 	private void NextPage()
 	{
-		curPage++;
+		Page++;
 		ShowPage();
 	}
 
 	private void PrevPage()
 	{
-		if (curPage > 1)
+		if (Page > 1)
 		{
-			curPage--;
+			Page--;
 			ShowPage();
 		}
 	}
 
 	private void ShowPage()
 	{
-		users = service.GetAllUsersPage(curPage)?.ToList() ?? new ();
+		navi.NavigateTo($"/example2/{Page}", forceLoad: true);
 	}
 
 	private void ShowPage(int i)
 	{
-		curPage = i;
+		Page = i;
 		ShowPage();
 	}
 
 	private void DeleteUser(int? id)
 	{
 		service.DeleteUser(id.Value);
-		ShowPage(curPage);
-		navi.NavigateTo("/example2", forceLoad: true);
+		navi.NavigateTo($"/example2/{Page}", forceLoad: true);
 	}
 }
