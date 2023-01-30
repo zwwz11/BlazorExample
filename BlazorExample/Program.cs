@@ -3,6 +3,7 @@ using BlazorExample.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.EntityFrameworkCore;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,9 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddDbContext<ApplicationDbContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("ConnString")));
+builder.Services.AddTransient<EmployeeService>();
+builder.Services.AddTransient<DepartmentService>();
+builder.Services.AddMudServices();
 
 var app = builder.Build();
 
