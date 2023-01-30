@@ -8,63 +8,72 @@
 
 <h3>Example2</h3>
 
-<table class="table">
-	<thead>
-		<tr>
-			<th>Id</th>
-			<th>Name</th>
-			<th>Sex</th>
-			<th>Active</th>
-			<th>Action</th>
-		</tr>
-	</thead>
-	<tbody>
-		@foreach(var item in users)
-		{
+@if(users == null)
+{
+	<p>Loading...</p>
+}
+else
+{
+	<table class="table">
+		<thead>
 			<tr>
-				<td>@item.Id</td>
-				<td>@item.Name</td>
-				<td>@item.UserSex</td>
-				<td><input type="checkbox" value="@item.IsActive" checked="@item.IsActive" onclick="return false;" /></td>
-				<td>
-					<input type="button" class="btn btn-primary" value="수정" onclick="@(() => navi.NavigateTo($"/example3/{item.Id}"))"/>
-					<input type="button" class="btn btn-warning" value="삭제" onclick="@(() => DeleteUser(item.Id))"/>
-				</td>
+				<th>Id</th>
+				<th>Name</th>
+				<th>Sex</th>
+				<th>Active</th>
+				<th>Action</th>
 			</tr>
-		}
-	</tbody>
-</table>
-<div>
-	<input type="button" class="btn-lg btn" id="prev" value="Previous" @onclick="PrevPage" />
-	@for (int i = Page - 2; i <= Page + 2; i++)
-	{
-		int j = i;
-		@if (i > 0)
+		</thead>
+		<tbody>
+			@foreach(var item in users)
+			{
+				<tr>
+					<td>@item.Id</td>
+					<td>@item.Name</td>
+					<td>@item.UserSex</td>
+					<td><input type="checkbox" value="@item.IsActive" checked="@item.IsActive" onclick="return false;" /></td>
+					<td>
+						<input type="button" class="btn btn-primary" value="수정" onclick="@(() => navi.NavigateTo($"/example3/{item.Id}"))"/>
+						<input type="button" class="btn btn-warning" value="삭제" onclick="@(() => DeleteUser(item.Id))"/>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+	<div>
+		<input type="button" class="btn-lg btn" id="prev" value="Previous" @onclick="PrevPage" />
+		@for (int i = Page - 2; i <= Page + 2; i++)
 		{
-			if (i == Page)
+			int j = i;
+			@if (i > 0)
 			{
-				<span class="px-2" style="font-weight:bold; cursor:pointer" @onclick="(() => ShowPage(j))">@i</span>
-			}
-			else
-			{
-				<span class="px-2" style="cursor:pointer" @onclick="(() => ShowPage(j))">@i</span>
+				if (i == Page)
+				{
+					<span class="px-2" style="font-weight:bold; cursor:pointer" @onclick="(() => ShowPage(j))">@i</span>
+				}
+				else
+				{
+					<span class="px-2" style="cursor:pointer" @onclick="(() => ShowPage(j))">@i</span>
+				}
 			}
 		}
-	}
-	<input type="button" class="btn-lg btn" id="next" value="Next" @onclick="NextPage" />
-</div>
+		<input type="button" class="btn-lg btn" id="next" value="Next" @onclick="NextPage" />
+	</div>
 
-<input class="btn btn-success" type="button" value="뒤로가기" onclick="@(() => navi.NavigateTo("/example1"))" />
+	<input class="btn btn-success" type="button" value="뒤로가기" onclick="@(() => navi.NavigateTo("/example1"))" />
+}
+
 
 @code {
 	[Parameter]
 	public int Page { get; set; }
 
-	List<User> users = new();
+	IEnumerable<User> users = null;
 
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
-		users = service.GetAllUsersPage(Page)?.ToList() ?? new();
+		await Task.Delay(1000);
+		users = await service.GetAllUsersPage(Page);
 	}
 
 	private void NextPage()

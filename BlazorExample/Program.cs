@@ -1,6 +1,8 @@
+using BlazorExample;
 using BlazorExample.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,8 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 //builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddSingleton<IUserService, UserService>();
+builder.Services.AddDbContext<ApplicationDbContext>(
+    options => options.UseSqlServer(builder.Configuration.GetConnectionString("ConnString")));
 
 var app = builder.Build();
 
