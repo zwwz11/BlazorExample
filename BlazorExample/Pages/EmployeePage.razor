@@ -1,16 +1,16 @@
-﻿@page "/departments"
+﻿@page "/employees"
 @inject MudBlazor.ISnackbar snackBar
 @inject IJSRuntime JsRuntime
 
 <MudCard Elevation="25">
 	<MudCardHeader>
 		<CardHeaderContent>
-			<MudText Typo="Typo.h6">Departments</MudText>
+			<MudText Typo="Typo.h6">Employees</MudText>
 		</CardHeaderContent>
 	</MudCardHeader>
 	<MudCardContent>
-		<EditForm OnValidSubmit="Add" Model="@department">
-			<MudTextField @bind-Value="@department.DepartmentName" Label="Name of Department"></MudTextField>
+		<EditForm OnValidSubmit="Add" Model="@employee">
+			<MudTextField @bind-Value="@employee.FirstName" Label="Name of Department"></MudTextField>
 			<br/>
 			<MudButton Color="Color.Info" Variant="Variant.Filled" OnClick="Add">Add Department</MudButton>
 		</EditForm>
@@ -18,18 +18,18 @@
 </MudCard>
 <br/>
 
-<MudTable Items="GetAll()" Filter="new Func<Department, bool>(Search)" @bind-depatment="department">
+<MudTable Items="GetAll()" Filter="new Func<Employee, bool>(Search)" @bind-employee="employee">
 	<ToolBarContent>
 		<MudText Typo="Typo.h6">Employees</MudText>
 		<MudSpacer/>
 		<MudTextField @bind-Value="searchString" Placeholder="Search For"></MudTextField>
 	</ToolBarContent>
 	<HeaderContent>
-		<MudTh>Department Name</MudTh>
+		<MudTh>Employee Name</MudTh>
 		<MudTh>Actions</MudTh>
 	</HeaderContent>
 	<RowTemplate>
-		<MudTd DataLabel="Department Name">@context.DepartmentName</MudTd>
+		<MudTd DataLabel="Employee">@context.FirstName</MudTd>
 		<MudTd DataLabel="Actions">
 			<MudFab OnClick="@(() => Update(context))" Color="Color.Primary" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" IconSize="Size.Small"></MudFab>
 			<MudFab OnClick="@(() => Delete(context))" Color="Color.Secondary" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" IconSize="Size.Small"></MudFab>
@@ -42,59 +42,59 @@
 
 @code {
 	private string searchString = "";
-	private Department department = new Department();
-	private List<Department> departments = new ();
+	private Employee employee = new Employee();
+	private List<Employee> employees = new ();
 
 	protected override async Task OnInitializedAsync()
 	{
-		departments = departmentService.GetAll();
+		employees = employeeService.GetAll();
 	}
 
-	private bool Search(Department department)
+	private bool Search(Employee employee)
 	{
 		if (string.IsNullOrWhiteSpace(searchString))
 			return true;
 
-		if (department.DepartmentName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+		if (employee.LastName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
 			return true;		
 
 
 		return false;
 	}
 
-	private List<Department> GetAll()
+	private List<Employee> GetAll()
 	{
-		departments = departmentService.GetAll();
-		return departments;
+		employees = employeeService.GetAll();
+		return employees;
 	}
 
 	private void Add()
 	{
-		if(department.DepartmentId == 0)
+		if (employee.EmployeeId == 0)
 		{
-			departmentService.Add(department);
-			snackBar.Add($"{department.DepartmentName} Department Added", Severity.Success);
+			employeeService.Add(employee);
+			snackBar.Add($"{employee.EmployeeId} EmployeeId Added", Severity.Success);
 		}
 		else
 		{
-			departmentService.Update(department);
-			snackBar.Add($"{department.DepartmentName} Department Updated", Severity.Success);
+			employeeService.Update(employee);
+			snackBar.Add($"{employee.EmployeeId} EmployeeId Updated", Severity.Success);
 		}
 
-		department = new ();
+		employee = new();
 		GetAll();
 	}
 
-	private void Update(Department record)
+	private void Update(Employee record)
 	{
-		department = record;
+		employee = record;
 		// 자녀에게 자신의 상태가 변경되었고 다시 렌더링 해야한다는 사실을 알려야할 때 사용.
 		StateHasChanged();
 	}
 
-	private async Task Delete(Department record)
+	private async Task Delete(Employee record)
 	{
-		departmentService.Delete(record);
+		employeeService.Delete(record);
 		GetAll();
 	}
 }
