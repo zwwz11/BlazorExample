@@ -1,5 +1,7 @@
-﻿using BlazorExample.Models;
+﻿using BlazorExample.Common;
+using BlazorExample.Models;
 using Microsoft.JSInterop;
+using System.Data;
 
 namespace BlazorExample.Services
 {
@@ -9,63 +11,63 @@ namespace BlazorExample.Services
 
         public void CreateUser(User user)
         {
-            User newUser = new User();
-            newUser.Id = user.Id;
-            newUser.Name = user.Name;
-            newUser.UserSex = user.UserSex;
-            newUser.IsActive = true;
-            
+            var dicParam = new Dictionary<string, dynamic>()
+            {
+                ["NAME"] = user.Name,
+                ["USER_SEX"] = user.UserSex,
+                ["IS_ACTIVE"] = user.IsActive
+            };
+
+            DbHelper.ExecuteSQL("P_USER_SAVE", dicParam);
         }
 
         public async Task<IEnumerable<User>> GetAllUsers()
         {
-            await Task.Delay(1000);
-            return await Task.FromResult(users.ToList());
+            List<User> users = new();
+            DataTable dtUser = DbHelper.GetDataTable("P_USER_SELECT", new Dictionary<string, dynamic>());
+            foreach (DataRow dr in dtUser.Rows)
+            {
+                User user = new User()
+                {
+                    Id = int.Parse(dr["ID"].ToString()),
+                    Name = dr["NAME"].ToString(),
+                    UserSex = (UserSex.userSex)Enum.Parse(typeof(UserSex.userSex), dr["USER_SEX"].ToString()),
+                    IsActive = bool.Parse(dr["IS_ACTIVE"].ToString())
+                };
+                users.Add(user);
+            }
+
+            return users;
         }
 
         public async Task<IEnumerable<User>> GetAllUsersPage(int curPage)
         {
-            try
-            {
-                return await Task.FromResult(users.GetRange(curPage * PAGESIZE - 5, 5));
-            }
-            catch
-            {
-                return null;
-            }
+            return null;
         }
 
         public void UpdateUser(int id, User user)
         {
-            User? findUser = users.Find(x => x.Id == id);
-            if(findUser != null)
-            {
-                findUser.Name = user.Name;
-            }
+            
         }
 
         public User FindUser(int id)
         {
-            return users.Find(x => x.Id == id);
+            return null;
         }
 
         public void DeleteUser(int id)
         {
-            User? findUser = FindUser(id);
-            if(findUser != null)
-            {
-                users.Remove(findUser);
-            }
+            
         }
 
         public void CreateMemo(Memo memo)
         {
-            memos.Add(memo);
+            
         }
 
         public IEnumerable<Memo> GetAllMemos()
         {
-            return memos.ToList();
+            return null;
         }
     }
 }
