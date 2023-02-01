@@ -6,16 +6,6 @@ namespace BlazorExample.Services
     public class UserService : IUserService
     {
         const int PAGESIZE = 5;
-        List<Memo> memos = new();
-        List<User> users = new();
-
-        public UserService()
-        {
-            users = Enumerable.Range(0, 100)
-                .Select(x => new User() { 
-                    Id = x, Name = $"User{x}", UserSex = UserSex.userSex.Male, IsActive = x % 2 == 0 
-                }).ToList();
-        }
 
         public void CreateUser(User user)
         {
@@ -24,7 +14,7 @@ namespace BlazorExample.Services
             newUser.Name = user.Name;
             newUser.UserSex = user.UserSex;
             newUser.IsActive = true;
-            users.Add(newUser);
+            
         }
 
         public async Task<IEnumerable<User>> GetAllUsers()

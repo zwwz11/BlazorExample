@@ -1,4 +1,5 @@
 using BlazorExample;
+using BlazorExample.Common;
 using BlazorExample.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
@@ -16,6 +17,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("ConnString")));
 builder.Services.AddTransient<EmployeeService>();
 builder.Services.AddTransient<DepartmentService>();
+builder.Services.AddSingleton<DbHelper>();
 builder.Services.AddMudServices();
 
 var app = builder.Build();
