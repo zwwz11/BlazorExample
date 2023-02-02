@@ -14,48 +14,50 @@ namespace BlazorExample.Services
             var dicParam = new Dictionary<string, dynamic>()
             {
                 ["NAME"] = user.Name,
-                ["USER_SEX"] = user.UserSex,
+                ["USER_SEX"] = Enum.GetName(typeof(UserSex.userSex), user.UserSex),
                 ["IS_ACTIVE"] = user.IsActive
             };
 
             DbHelper.ExecuteSQL("P_USER_SAVE", dicParam);
         }
 
-        public async Task<IEnumerable<User>> GetAllUsers()
+        public async Task<IEnumerable<User>> GetAllUsers(Dictionary<string, dynamic> dicParam = null)
         {
-            List<User> users = new();
-            DataTable dtUser = DbHelper.GetDataTable("P_USER_SELECT", new Dictionary<string, dynamic>());
-            foreach (DataRow dr in dtUser.Rows)
+            try
             {
-                User user = new User()
+                DataTable dtUser = DbHelper.GetDataTable("P_USER_SELECT", dicParam ?? new());
+                List<User> users = dtUser.AsEnumerable().Select(x => new User
                 {
-                    Id = int.Parse(dr["ID"].ToString()),
-                    Name = dr["NAME"].ToString(),
-                    UserSex = (UserSex.userSex)Enum.Parse(typeof(UserSex.userSex), dr["USER_SEX"].ToString()),
-                    IsActive = bool.Parse(dr["IS_ACTIVE"].ToString())
-                };
-                users.Add(user);
-            }
+                    Id = x.Field<long>("ID"),
+                    Name = x.Field<string>("NAME"),
+                    UserSex = x.Field<UserSex.userSex?>("USER_SEX"),
+                    IsActive = x.Field<bool?>("IS_ACTIVE").HasValue ? x.Field<bool>("IS_ACTIVE") : false
+                }).ToList();
 
-            return users;
+                return await Task.FromResult(users);
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         public async Task<IEnumerable<User>> GetAllUsersPage(int curPage)
         {
-            return null;
+            return await Task.FromResult(new List<User>());
         }
 
-        public void UpdateUser(int id, User user)
+        public void UpdateUser(long id, User user)
         {
             
         }
 
-        public User FindUser(int id)
+        public User FindUser(long id)
         {
             return null;
         }
 
-        public void DeleteUser(int id)
+        public void DeleteUser(long id)
         {
             
         }

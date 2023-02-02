@@ -103,7 +103,7 @@ else
 		ShowPage();
 	}
 
-	private void DeleteUser(int? id)
+	private void DeleteUser(long? id)
 	{
 		service.DeleteUser(id.Value);
 		navi.NavigateTo($"/example2/{Page}", forceLoad: true);
