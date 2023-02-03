@@ -5,14 +5,13 @@ namespace BlazorExample.Models
 {
     public class User
     {
-        [Required(ErrorMessage = "Id Empty!")]
         public long Id { get; set; }
 
         [Required(ErrorMessage = "Name Empty!")]
         public string Name { get; set; }
 
-        public UserSex.userSex? UserSex { get; set; }
+        public UserSex.userSex? UserSex { get; set; } = Models.UserSex.userSex.Male;
 
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = true;
     }
 }

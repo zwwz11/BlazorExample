@@ -11,35 +11,26 @@
 	<DataAnnotationsValidator/>
 
 	<div class="mb-2 col-lg-6 col-md-6 col-sm-12">
-		<label class="form-label" for="id">Id</label>
-		<InputNumber @bind-Value="user.Id" class="form-control" id="id" />
-		<ValidationMessage For="@(() => user.Id)"/>
-	</div>
-	<div class="mb-2 col-lg-6 col-md-6 col-sm-12">
 		<label class="form-label" for="name">Name</label>
 		<InputText @bind-Value="user.Name" class="form-control" id="name" />
 		<ValidationMessage For="@(() => user.Name)"/>
 	</div>
+	<div class="mb-3 col-lg-6 col-md-6 col-sm-12">
+		<label for="userSex">UserSex</label>
+		<InputSelect @bind-Value="user.UserSex" class="form-select">
+			@foreach(var item in Enum.GetNames(typeof(UserSex.userSex)))
+			{
+				<option>@item</option>
+			}
+		</InputSelect>
+	</div>
 	<div class="mb-3 form-check col-lg-6 col-md-6 col-sm-12">
-		<label class="form-check-label" for="isActive">목록 열기</label>
+		<label class="form-check-label" for="isActive">사용여부</label>
 		<InputCheckbox @bind-Value="user.IsActive" class="form-check-input" id="isActive" />
 	</div>
 
-	@if(user.IsActive)
-	{
-		<div class="mb-3 col-lg-6 col-md-6 col-sm-12">
-			<label for="userSex">UserSex</label>
-			<InputSelect @bind-Value="user.UserSex" class="form-select">
-				@foreach(var item in Enum.GetNames(typeof(UserSex.userSex)))
-				{
-					<option>@item</option>
-				}
-			</InputSelect>
-		</div>
-	}
-
 	<input class="btn btn-primary" type="submit" value="등록"/>
-	<input class="btn btn-success" type="button" value="목록" onclick="@(() => navigationManager.NavigateTo($"/example2/{1}"))"/>
+	<input class="btn btn-success" type="button" value="목록" onclick="@(() => navigationManager.NavigateTo($"/example2"))"/>
 
 </EditForm>
 
@@ -47,11 +38,11 @@
 @code {
 	private User user = new();
 
-	private async void CreateUser()
+	private async Task CreateUser()
 	{
 		try
 		{
-			service.CreateUser(user);
+			await service.CreateUser(user);
 			user = new();
 			await jsRuntime.InvokeVoidAsync("alert", "Success!");
 		}

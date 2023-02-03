@@ -1,4 +1,4 @@
-﻿@page "/example2/{Page:int}"
+﻿@page "/example2"
 @using BlazorExample.Common
 
 @inject IUserService service
@@ -69,11 +69,10 @@ else
 	[Parameter]
 	public int Page { get; set; }
 
-	IEnumerable<User> users = null;
+	IEnumerable<User> users;
 
 	protected override async Task OnInitializedAsync()
 	{
-		await Task.Delay(1000);
 		users = await service.GetAllUsers();
 	}
 
@@ -94,7 +93,7 @@ else
 
 	private void ShowPage()
 	{
-		navi.NavigateTo($"/example2/{Page}", forceLoad: true);
+		navi.NavigateTo($"/example2", forceLoad: true);
 	}
 
 	private void ShowPage(int i)
@@ -103,9 +102,9 @@ else
 		ShowPage();
 	}
 
-	private void DeleteUser(long? id)
+	private async Task DeleteUser(long id)
 	{
-		service.DeleteUser(id.Value);
-		navi.NavigateTo($"/example2/{Page}", forceLoad: true);
+		await service.DeleteUser(id);
+		navi.NavigateTo($"/example2", forceLoad: true);
 	}
 }

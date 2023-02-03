@@ -6,26 +6,25 @@
 
 <h3>Example3</h3>
 
-<EditForm Model="@user" OnValidSubmit="@UpdateUser">
-	<DataAnnotationsValidator/>
+@if(user == null)
+{
+	<p>Loading...</p>
+}
+else
+{
+	<EditForm Model="@user" OnValidSubmit="@UpdateUser">
+		<DataAnnotationsValidator/>
 
-	<div class="mb-2 col-lg-6 col-md-6 col-sm-12">
-		<label class="form-label" for="id">Id</label>
-		<InputNumber @bind-Value="user.Id" class="form-control" id="id" readonly />
+		<div class="mb-2 col-lg-6 col-md-6 col-sm-12">
+			<label class="form-label" for="id">Id</label>
+			<InputNumber @bind-Value="user.Id" class="form-control" id="id" readonly />
 		
-	</div>
-	<div class="mb-2 col-lg-6 col-md-6 col-sm-12">
-		<label class="form-label" for="name">Name</label>
-		<InputText @bind-Value="user.Name" class="form-control" id="name" />
-		<ValidationMessage For="@(() => user.Name)"/>
-	</div>
-	<div class="mb-3 form-check col-lg-6 col-md-6 col-sm-12">
-		<label class="form-check-label" for="isActive">목록 열기</label>
-		<InputCheckbox @bind-Value="user.IsActive" class="form-check-input" id="isActive" />
-	</div>
-
-	@if(user.IsActive)
-	{
+		</div>
+		<div class="mb-2 col-lg-6 col-md-6 col-sm-12">
+			<label class="form-label" for="name">Name</label>
+			<InputText @bind-Value="user.Name" class="form-control" id="name" />
+			<ValidationMessage For="@(() => user.Name)"/>
+		</div>
 		<div class="mb-3 col-lg-6 col-md-6 col-sm-12">
 			<label for="userSex">UserSex</label>
 			<InputSelect @bind-Value="user.UserSex" class="form-select">
@@ -35,11 +34,14 @@
 				}
 			</InputSelect>
 		</div>
-	}
+		<div class="mb-3 form-check col-lg-6 col-md-6 col-sm-12">
+			<label class="form-check-label" for="isActive">사용 여부</label>
+			<InputCheckbox @bind-Value="user.IsActive" class="form-check-input" id="isActive" />
+		</div>
+		<input class="btn btn-primary" type="submit" value="수정" onclick="@(() => navi.NavigateTo("/example2"))"/>
 
-	<input class="btn btn-primary" type="submit" value="수정" onclick="@(() => navi.NavigateTo("/example2"))"/>
-
-</EditForm>
+	</EditForm>
+}
 
 @code {
 	[Parameter]
@@ -47,14 +49,13 @@
 
 	User user = null;
 
-	protected override void OnInitialized()
+	protected override async Task OnInitializedAsync()
 	{
-		base.OnInitialized();
-		user = service.FindUser(Id);
+		user = await service.FindUser(Id);
 	}
 
-	private void UpdateUser()
+	private async Task UpdateUser()
 	{
-		service.UpdateUser(Id, user);
+		await service.UpdateUser(Id, user);
 	}
 }
