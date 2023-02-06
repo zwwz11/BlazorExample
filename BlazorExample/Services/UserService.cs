@@ -32,20 +32,28 @@ namespace BlazorExample.Services
             }
         }
 
-        public async Task<IEnumerable<User>> GetAllUsers()
+        public async Task<Pager<User>> GetAllUsers(int currentPage)
         {
             try
             {
-                List<User> users = new List<User>();
+                Pager<User> pager = new Pager<User>();
+                pager.CurretPage = currentPage;
+
                 var dicParam = new Dictionary<string, dynamic>()
                 {
-                    ["MODE"] = 1
+                    ["CURRENT_PAGE"] = pager.CurretPage,
+                    ["PAGE_SIZE"] = pager.PageSize
                 };
 
                 await Task.Run(() =>
                 {
+                    dicParam["MODE"] = 3;
+                    DataTable dtTotalCount = DbHelper.GetDataTable("P_USER_SELECT", dicParam);
+                    pager.TotalPage = int.Parse($"{dtTotalCount.AsEnumerable().FirstOrDefault()?["TOTAL_COUNT"]}");
+
+                    dicParam["MODE"] = 1;
                     DataTable dtUser = DbHelper.GetDataTable("P_USER_SELECT", dicParam);
-                    users = dtUser.AsEnumerable().Select(x => new User
+                    pager.Values = dtUser.AsEnumerable().Select(x => new User
                     {
                         Id = x.Field<long>("ID"),
                         Name = x.Field<string>("NAME"),
@@ -54,7 +62,7 @@ namespace BlazorExample.Services
                     }).ToList();
                 });
 
-                return users;
+                return pager;
             }
             catch
             {

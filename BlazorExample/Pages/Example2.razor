@@ -1,4 +1,4 @@
-﻿@page "/example2"
+﻿@page "/example2/{CurrentPage:int}"
 @using BlazorExample.Common
 
 @inject IUserService service
@@ -9,7 +9,7 @@
 
 <h3>Example2</h3>
 
-@if(users == null)
+@if(pager == null)
 {
 	<p>Loading...</p>
 }
@@ -26,7 +26,7 @@ else
 			</tr>
 		</thead>
 		<tbody>
-			@foreach(var item in users)
+			@foreach(var item in pager.Values)
 			{
 				<tr>
 					<td>@item.Id</td>
@@ -41,24 +41,23 @@ else
 			}
 		</tbody>
 	</table>
-	<div>
-		<input type="button" class="btn-lg btn" id="prev" value="Previous" @onclick="PrevPage" />
-		@for (int i = Page - 2; i <= Page + 2; i++)
-		{
-			int j = i;
-			@if (i > 0)
+	<div class="d-flex justify-content-center">
+		<nav aria-label="Page navigation example">
+		  <ul class="pagination">
+			@for (int i = pager.StartPage; i <= pager.EndPage; i++)
 			{
-				if (i == Page)
+				var page = i;
+				@if (page == CurrentPage)
 				{
-					<span class="px-2" style="font-weight:bold; cursor:pointer" @onclick="(() => ShowPage(j))">@i</span>
+					<li class="page-item active"><a class="page-link" @onclick="(() => ShowPage(page))">@i</a></li>
 				}
 				else
 				{
-					<span class="px-2" style="cursor:pointer" @onclick="(() => ShowPage(j))">@i</span>
+					<li class="page-item"><a class="page-link" @onclick="(() => ShowPage(page))">@i</a></li>
 				}
 			}
-		}
-		<input type="button" class="btn-lg btn" id="next" value="Next" @onclick="NextPage" />
+		  </ul>
+		</nav>
 	</div>
 
 	<input class="btn btn-success" type="button" value="뒤로가기" onclick="@(() => navi.NavigateTo("/example1"))" />
@@ -67,44 +66,23 @@ else
 
 @code {
 	[Parameter]
-	public int Page { get; set; }
+	public int CurrentPage { get; set; } = 1;
 
-	IEnumerable<User> users;
+	Pager<User> pager;
 
 	protected override async Task OnInitializedAsync()
 	{
-		users = await service.GetAllUsers();
+		pager = await service.GetAllUsers(CurrentPage);
 	}
 
-	private void NextPage()
+	private async Task ShowPage(int currentPage)
 	{
-		Page++;
-		ShowPage();
-	}
-
-	private void PrevPage()
-	{
-		if (Page > 1)
-		{
-			Page--;
-			ShowPage();
-		}
-	}
-
-	private void ShowPage()
-	{
-		navi.NavigateTo($"/example2", forceLoad: true);
-	}
-
-	private void ShowPage(int i)
-	{
-		Page = i;
-		ShowPage();
+		navi.NavigateTo($"/example2/{currentPage}", forceLoad: true);
 	}
 
 	private async Task DeleteUser(long id)
 	{
 		await service.DeleteUser(id);
-		navi.NavigateTo($"/example2", forceLoad: true);
+		navi.NavigateTo($"/example2/{CurrentPage}", forceLoad: true);
 	}
 }

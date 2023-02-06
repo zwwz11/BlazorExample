@@ -38,7 +38,7 @@ else
 			<label class="form-check-label" for="isActive">사용 여부</label>
 			<InputCheckbox @bind-Value="user.IsActive" class="form-check-input" id="isActive" />
 		</div>
-		<input class="btn btn-primary" type="submit" value="수정" onclick="@(() => navi.NavigateTo("/example2"))"/>
+		<input class="btn btn-primary" type="submit" value="수정" onclick="@(() => navi.NavigateTo($"/example2/{1}"))"/>
 
 	</EditForm>
 }

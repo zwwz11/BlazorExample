@@ -10,7 +10,7 @@ namespace BlazorExample.Services
         void CreateMemo(Memo memo);
         Task<User> FindUser(long id);
         
-        Task<IEnumerable<User>> GetAllUsers();
+        Task<Pager<User>> GetAllUsers(int currentPage);
         Task<IEnumerable<User>> GetAllUsersPage(int curPage);
         IEnumerable<Memo> GetAllMemos();
     }
