@@ -1,8 +1,5 @@
-﻿using BlazorExample.Services;
-using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore.Query.Internal;
+﻿using Microsoft.Data.SqlClient;
 using System.Data;
-using static MudBlazor.CategoryTypes;
 
 namespace BlazorExample.Common
 {
@@ -48,7 +45,7 @@ namespace BlazorExample.Common
                         using (SqlDataAdapter adapter = new SqlDataAdapter(command))
                         {
                             DataTable dt = new();
-                            ㅣㅣㅐadapter.Fill(dt);
+                            adapter.Fill(dt);
                             return dt;
                         }
                     }
