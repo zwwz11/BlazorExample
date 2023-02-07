@@ -44,23 +44,18 @@ else
 	<div class="d-flex justify-content-center">
 		<nav aria-label="Page navigation example">
 		  <ul class="pagination">
+			<li class="@GetPrevNextClass(pager.Prev)"><a class="page-link" @onclick="(() => ShowPage(CurrentPage - 1))">＜</a></li>
 			@for (int i = pager.StartPage; i <= pager.EndPage; i++)
 			{
 				var page = i;
-				@if (page == CurrentPage)
-				{
-					<li class="page-item active"><a class="page-link" @onclick="(() => ShowPage(page))">@i</a></li>
-				}
-				else
-				{
-					<li class="page-item"><a class="page-link" @onclick="(() => ShowPage(page))">@i</a></li>
-				}
+				<li class="@GetActiveClass(page)"><a class="page-link" @onclick="(() => ShowPage(page))">@i</a></li>
 			}
+			<li class="@GetPrevNextClass(pager.Next)"><a class="page-link" @onclick="(() => ShowPage(CurrentPage + 1))">＞</a></li>
 		  </ul>
 		</nav>
 	</div>
 
-	<input class="btn btn-success" type="button" value="뒤로가기" onclick="@(() => navi.NavigateTo("/example1"))" />
+	<input class="btn btn-success" type="button" value="목록으로" onclick="@(() => navi.NavigateTo("/example1"))" />
 }
 
 
@@ -68,21 +63,34 @@ else
 	[Parameter]
 	public int CurrentPage { get; set; } = 1;
 
-	Pager<User> pager;
+	Pager<User>? pager;
 
 	protected override async Task OnInitializedAsync()
 	{
+		CurrentPage = CurrentPage == 0 ? 1 : CurrentPage;
 		pager = await service.GetAllUsers(CurrentPage);
 	}
 
-	private async Task ShowPage(int currentPage)
+	private void ShowPage(int currentPage)
 	{
 		navi.NavigateTo($"/example2/{currentPage}", forceLoad: true);
+	}
+
+	private string GetActiveClass(int page)
+	{
+		return page == CurrentPage ? "page-item active" : "page-item";
+	}
+
+	private string GetPrevNextClass(bool prevNext)
+	{
+		return prevNext ? "page-item" : "page-item disabled";
 	}
 
 	private async Task DeleteUser(long id)
 	{
 		await service.DeleteUser(id);
-		navi.NavigateTo($"/example2/{CurrentPage}", forceLoad: true);
+		int afterPage = pager.Values.Count == 1 ? CurrentPage - 1 : CurrentPage;
+		navi.NavigateTo($"/example2/{afterPage}", forceLoad: true);
+		
 	}
 }

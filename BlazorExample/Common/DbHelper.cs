@@ -48,7 +48,7 @@ namespace BlazorExample.Common
                         using (SqlDataAdapter adapter = new SqlDataAdapter(command))
                         {
                             DataTable dt = new();
-                            adapter.Fill(dt);
+                            ㅣㅣㅐadapter.Fill(dt);
                             return dt;
                         }
                     }

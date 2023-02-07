@@ -37,11 +37,11 @@ namespace BlazorExample.Services
             try
             {
                 Pager<User> pager = new Pager<User>();
-                pager.CurretPage = currentPage;
+                pager.CurrentPage = currentPage;
 
                 var dicParam = new Dictionary<string, dynamic>()
                 {
-                    ["CURRENT_PAGE"] = pager.CurretPage,
+                    ["CURRENT_PAGE"] = pager.CurrentPage,
                     ["PAGE_SIZE"] = pager.PageSize
                 };
 

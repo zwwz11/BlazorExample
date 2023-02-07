@@ -15,7 +15,7 @@ namespace BlazorExample.Models
         /// <summary>
         /// 현재 페이지
         /// </summary>
-        public int CurretPage { get; set; } = 1;
+        public int CurrentPage { get; set; } = 1;
         /// <summary>
         /// 총 페이지 수량
         /// </summary>
@@ -29,22 +29,24 @@ namespace BlazorExample.Models
         { 
             get
             {
-                return CurretPage - (CurretPage % PageSize) + 1;
+                return CurrentPage - (CurrentPage % PageSize) + 1;
             }
         }
         public int EndPage 
         { 
             get
             {
-                if (CurretPage - (CurretPage % 10) + PageCount > TotalPage)
+                if (CurrentPage - (CurrentPage % 10) + PageCount > TotalPage)
                 {
                     return TotalPage;
                 }
                 else
                 {
-                    return CurretPage - (CurretPage % 10) + PageCount;
+                    return CurrentPage - (CurrentPage % 10) + PageCount;
                 }
             }
         }
+        public bool Prev => (CurrentPage - 1 >= StartPage);
+        public bool Next => (CurrentPage + 1 <= EndPage);
     }
 }
