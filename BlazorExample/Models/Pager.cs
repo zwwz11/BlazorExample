@@ -29,24 +29,24 @@ namespace BlazorExample.Models
         { 
             get
             {
-                return CurrentPage - (CurrentPage % PageSize) + 1;
+                return ((CurrentPage - 1) / PageSize) * PageSize + 1;
             }
         }
         public int EndPage 
         { 
             get
             {
-                if (CurrentPage - (CurrentPage % 10) + PageCount > TotalPage)
+                if (StartPage + PageCount - 1 > TotalPage)
                 {
                     return TotalPage;
                 }
                 else
                 {
-                    return CurrentPage - (CurrentPage % 10) + PageCount;
+                    return StartPage + PageCount - 1;
                 }
             }
         }
-        public bool Prev => (CurrentPage - 1 >= StartPage);
-        public bool Next => (CurrentPage + 1 <= EndPage);
+        public bool Prev => (CurrentPage - 1 >= 1);
+        public bool Next => (CurrentPage + 1 <= TotalPage);
     }
 }
