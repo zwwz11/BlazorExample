@@ -9,54 +9,10 @@
 
 <h3>Example2</h3>
 
-@if(pager == null)
-{
-	<p>Loading...</p>
-}
-else
-{
-	<table class="table">
-		<thead>
-			<tr>
-				<th>Id</th>
-				<th>Name</th>
-				<th>Sex</th>
-				<th>Active</th>
-				<th>Action</th>
-			</tr>
-		</thead>
-		<tbody>
-			@foreach(var item in pager.Values)
-			{
-				<tr>
-					<td>@item.Id</td>
-					<td>@item.Name</td>
-					<td>@item.UserSex</td>
-					<td><input type="checkbox" value="@item.IsActive" checked="@item.IsActive" onclick="return false;" /></td>
-					<td>
-						<input type="button" class="btn btn-primary" value="수정" onclick="@(() => navi.NavigateTo($"/example3/{item.Id}"))"/>
-						<input type="button" class="btn btn-warning" value="삭제" onclick="@(() => DeleteUser(item.Id))"/>
-					</td>
-				</tr>
-			}
-		</tbody>
-	</table>
-	<div class="d-flex justify-content-center">
-		<nav aria-label="Page navigation example">
-		  <ul class="pagination">
-			<li class="@GetPrevNextClass(pager.Prev)"><a class="page-link" @onclick="(() => ShowPage(CurrentPage - 1))">＜</a></li>
-			@for (int i = pager.StartPage; i <= pager.EndPage; i++)
-			{
-				var page = i;
-				<li class="@GetActiveClass(page)"><a class="page-link" @onclick="(() => ShowPage(page))">@i</a></li>
-			}
-			<li class="@GetPrevNextClass(pager.Next)"><a class="page-link" @onclick="(() => ShowPage(CurrentPage + 1))">＞</a></li>
-		  </ul>
-		</nav>
-	</div>
-
-	<input class="btn btn-success" type="button" value="목록으로" onclick="@(() => navi.NavigateTo("/example1"))" />
-}
+<MyTable DataSource="GetDataSource()"
+		OnClickPrev="ShowPage"
+		OnClickPage="ShowPage" 
+		OnClickNext="ShowPage"/>
 
 
 @code {
@@ -65,10 +21,14 @@ else
 
 	Pager<User>? pager;
 
-	protected override async Task OnInitializedAsync()
+	protected override void OnInitialized()
 	{
 		CurrentPage = CurrentPage == 0 ? 1 : CurrentPage;
-		pager = await service.GetAllUsers(CurrentPage);
+	}
+
+	private Task<Pager<User>> GetDataSource()
+	{
+		return service.GetAllUsers(CurrentPage);
 	}
 
 	private void ShowPage(int currentPage)

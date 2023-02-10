@@ -2,7 +2,7 @@
 
 namespace BlazorExample.Models
 {
-    public class Pager<T> where T : class
+    public class Pager<T>
     {
         /// <summary>
         /// 한 번에 보여줄 게시글 수

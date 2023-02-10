@@ -32,7 +32,7 @@ namespace BlazorExample.Services
             }
         }
 
-        public async Task<Pager<User>> GetAllUsers(int currentPage)
+        public Task<Pager<User>> GetAllUsers(int currentPage)
         {
             try
             {
@@ -45,7 +45,7 @@ namespace BlazorExample.Services
                     ["PAGE_SIZE"] = pager.PageSize
                 };
 
-                await Task.Run(() =>
+                return Task<Pager<User>>.Run(() =>
                 {
                     dicParam["MODE"] = 3;
                     DataTable dtTotalCount = DbHelper.GetDataTable("P_USER_SELECT", dicParam);
@@ -60,9 +60,9 @@ namespace BlazorExample.Services
                         UserSex = Enum.Parse<UserSex.userSex>(x.Field<string>("USER_SEX")),
                         IsActive = x.Field<bool?>("IS_ACTIVE").HasValue ? x.Field<bool>("IS_ACTIVE") : false
                     }).ToList();
-                });
 
-                return pager;
+                    return pager;
+                });
             }
             catch
             {

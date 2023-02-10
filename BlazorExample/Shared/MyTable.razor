@@ -1,0 +1,91 @@
+﻿@using System.Data
+@using System.Reflection
+@inject NavigationManager navi
+@typeparam modelType
+
+@if(pager.Values.Count == 0)
+{
+    <p>Loading Table...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                @foreach(string col in columnNames)
+                {
+                    <th>@col</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in pager.Values)
+            {
+                <tr class="row-hover">
+                    @foreach(var pro in typeof(modelType).GetProperties())
+                    {
+                        if (item.GetType().GetProperty(pro.Name)?.PropertyType == typeof(bool))
+                        {
+                            <th><input class="form-check" type="checkbox" checked="@(bool.Parse($"{item.GetType().GetProperty(pro.Name)?.GetValue(item, null)}"))" onclick="return false;" /></th>
+                        }
+                        else
+                        {
+                            <th>@($"{item.GetType().GetProperty(pro.Name)?.GetValue(item, null) ?? "Null"}")</th>
+                        }
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="d-flex justify-content-center">
+        <nav aria-label="Page navigation example">
+            <ul class="pagination">
+                <li class="@GetPrevNextClass(pager.Prev)"><a class="page-link" @onclick="@(() => OnClickPrev.InvokeAsync(pager.CurrentPage - 1))">＜</a></li>
+                @for (int i = pager.StartPage; i <= pager.EndPage; i++)
+                {
+                    var page = i;
+                    <li class="@GetActiveClass(page)"><a class="page-link" @onclick="@(() => OnClickPrev.InvokeAsync(page))">@i</a></li>
+                }
+                <li class="@GetPrevNextClass(pager.Next)"><a class="page-link" @onclick="@(() => OnClickPrev.InvokeAsync(pager.CurrentPage + 1))">＞</a></li>
+            </ul>
+        </nav>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Task<Pager<modelType>>? DataSource { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnClickNext { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnClickPrev { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnClickPage { get; set; }
+
+    private List<string> columnNames = new ();
+    private Pager<modelType> pager = new ();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Column Header Name 가져오기 
+        var properties = typeof(modelType).GetProperties();
+        columnNames = properties.AsEnumerable().Select(x => x.Name).ToList();
+        await DataSource;
+        pager = DataSource.Result;
+    }
+
+    private string GetActiveClass(int page)
+    {
+        return page == pager.CurrentPage ? "page-item active" : "page-item";
+    }
+
+    private string GetPrevNextClass(bool prevNext)
+    {
+        return prevNext ? "page-item" : "page-item disabled";
+    }
+
+}
